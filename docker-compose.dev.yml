@@ -1,0 +1,14 @@
+services:
+  redis:
+    image: redis:7.4.1-alpine
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    ports:
+      - "6333:6333"
+
+
+volumes:
+  qdrant-data:
