@@ -31,8 +31,8 @@ async def upload_pdf(
             {
                 "content": text,
                 "source": file.filename,
-                "company_id": company.companyId,
-                "user_id": company.userId,  # Añadido user_id
+                "company_id": company,
+                "user_id": company, 
             }
         )
         return EmbeddingCreateResponse(success=success)

@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
-from agent.rag_agent import retriever
+from agent.rag_agent import get_retriever
 from agent.rag_agent import get_rag_agent 
 from concurrent.futures import ThreadPoolExecutor
 import orjson
@@ -22,7 +22,7 @@ def sync_stream(generator):
 async def chat_rag_handler(request: Request) -> StreamingResponse:
     try:
         data = await request.json()
-        chat_session_id = request.headers.get("session")
+        chat_session_id = request.headers.get("chat_session")
         company_id = request.headers.get("company")
 
         if not chat_session_id:
@@ -30,7 +30,7 @@ async def chat_rag_handler(request: Request) -> StreamingResponse:
         if not company_id:
             raise HTTPException(status_code=400, detail="Falta el header 'company'")
         
-        logger.debug(f"Session ID: {chat_session_id}")
+        logger.debug(f"chat_session ID: {chat_session_id}")
         logger.debug(f"Company ID: {company_id}")
 
         user_input = data.get("message")
@@ -42,7 +42,7 @@ async def chat_rag_handler(request: Request) -> StreamingResponse:
                 {"key": "companyId",  "match": {"value": int(company_id)}},
                 {"key": "ChatSessionId", "match": {"value": chat_session_id}},
             ],
-            "retriever": retriever
+            "retriever": get_retriever(company_id)
         }
         logger.debug(f"Filter aplicado: {filter_}")
 

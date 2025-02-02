@@ -8,7 +8,7 @@ from qdrant_client import QdrantClient
 import tiktoken
 from dotenv import load_dotenv
 from config.config import app_env
-
+from qdrant_client.models import VectorParams, Distance
 import logging
 import asyncio
 logger = logging.getLogger("uvicorn")
@@ -16,29 +16,37 @@ logger = logging.getLogger("uvicorn")
 load_dotenv()
 env_settings = app_env
 
-MAX_HISTORY_LENGTH = 3
-
 def count_tokens(text: str, model: str = "gpt-4o-mini") -> int:
     encoding = tiktoken.encoding_for_model(model)
     return len(encoding.encode(text))
 
 qdrant_client = QdrantClient(url=env_settings.QDRANT_URL)
 
-try:
-    qdrant_client.get_collection(collection_name="emb_collection")
-    print("Conectado a Qdrant y la colección 'emb_collection' existe.")
-except Exception as e:
-    print(f"Error al conectar con Qdrant: {e}")
-    exit(1)
-    
-vector_store = QdrantVectorStore(
-    client=qdrant_client,
-    collection_name="emb_collection",
-    embedding=OpenAIEmbeddings(),
-)
+def get_vector_store(company_id: str) -> QdrantVectorStore:
+    """Crea o recupera la colección específica para la empresa."""
+    collection_name = f"emb_collection_{company_id}"
+    # Verificar si la colección existe; si no, crearla.
+    try:
+        qdrant_client.get_collection(collection_name=collection_name)
+        logger.info(f"Colección {collection_name} encontrada.")
+    except Exception as e:
+        logger.info(f"Colección {collection_name} no encontrada. Creándola. Detalle: {e}")
+        qdrant_client.create_collection(
+            collection_name=collection_name,
+            vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
+        )
+        logger.info(f"Colección {collection_name} creada automáticamente.")
+    # Retornar el vector_store para la colección
+    return QdrantVectorStore(
+        client=qdrant_client,
+        collection_name=collection_name,
+        embedding=OpenAIEmbeddings(),
+    )
 
 
-retriever = vector_store.as_retriever()
+def get_retriever(company_id: str):
+    vector_store = get_vector_store(company_id)
+    return vector_store.as_retriever()
 
 llm = ChatOpenAI(
     model="gpt-4o-mini",
@@ -62,13 +70,6 @@ qa_prompt = ChatPromptTemplate.from_messages([
 
 logger.debug(f"Variables de entrada del prompt: {qa_prompt.input_variables}")
 
-qa_chain = RetrievalQA.from_chain_type(
-    llm=llm,
-    chain_type="stuff",
-    retriever=retriever,
-    input_key="query",
-    return_source_documents=True
-)
 
 def get_session_history(session_id: str) -> RedisChatMessageHistory:
     logger.debug(f"getSessionHistory: {session_id}")
@@ -77,13 +78,21 @@ def get_session_history(session_id: str) -> RedisChatMessageHistory:
         url=env_settings.REDIS_URL
     )
 
-async def conversational_rag_chain(session_id: str, user_input: str) -> Dict[str, str]:
+async def conversational_rag_chain(company_id: str, session_id: str, user_input: str) -> Dict[str, str]:
     logger.info(f"Usando session_id={session_id}")
+    
+    retriever = get_retriever(company_id)
+    
+    qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",
+    retriever=retriever,
+    input_key="query",
+    return_source_documents=True
+)
     
     history = get_session_history(session_id)
     past_messages = await history.aget_messages()
-    
-    # limited_messages = past_messages[-MAX_HISTORY_LENGTH * 2 :]
     
     formatted_history = [
         {"role": "user" if msg.type == 'human' else "assistant", "content": msg.content}

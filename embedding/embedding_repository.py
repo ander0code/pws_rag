@@ -17,16 +17,31 @@ env_settings = app_env
 class QdrantEmbeddingRepository:
     def __init__(self):
         self.client = qdrant_client
-        self.collection_name = "emb_collection"
         self.embeddings = OpenAIEmbeddings()  
-        self.vector_store = QdrantVectorStore(
-            client=self.client,
-            collection_name=self.collection_name,
-            embedding=self.embeddings  
-        )
 
     def save_embedding(self, content: str, metadata: Dict) -> bool:
         try:
+            company_id = metadata.get("companyId")
+            if not company_id:
+                logger.error("companyId no se ha especificado en metadata.")
+                return False
+            
+            collection_name = f"emb_collection_{metadata.get('companyId')}"
+            collections_response = self.client.get_collections()
+            existing_collections = [coll.name for coll in collections_response.collections]
+            if collection_name not in existing_collections:
+                from qdrant_client.models import VectorParams, Distance
+                self.client.create_collection(
+                    collection_name=collection_name,
+                    vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
+                )
+                logger.info(f"Colección {collection_name} creada automáticamente.")
+
+            vector_store = QdrantVectorStore(
+                client=self.client,
+                collection_name=collection_name,
+                embedding=self.embeddings
+            )
             text_splitter = CharacterTextSplitter()
             chunks = text_splitter.split_text(content)
             docs = [
@@ -40,9 +55,9 @@ class QdrantEmbeddingRepository:
                 )
                 for chunk in chunks
             ]
-            self.vector_store.add_documents(docs)
+            vector_store.add_documents(docs)
             logger.info("Embeddings guardados exitosamente")
             return True
         except Exception as e:
             logger.error(f"Error al guardar embedding: {e}")
-            return False  # Corregido de 'F' a 'False'
+            return False  
