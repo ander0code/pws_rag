@@ -17,6 +17,7 @@ class AppEnv(BaseSettings):
     REDIS_URL: str
     REDIS_SESSION_TTL: int
     OPENAI_API_KEY: str
+    DB_URL: str
 
     class Config:
         env_file = env_file

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
 from agent.rag_agent import get_retriever
-from agent.rag_agent import get_rag_agent 
+from agent.rag_agent import get_rag_agent
 from concurrent.futures import ThreadPoolExecutor
 import orjson
 import logging
@@ -34,6 +34,7 @@ async def chat_rag_handler(request: Request) -> StreamingResponse:
         logger.debug(f"Company ID: {company_id}")
 
         user_input = data.get("message")
+        logger.debug(f"mensaje: {user_input}")
         if not user_input:
             raise HTTPException(status_code=400, detail="Falta el mensaje en el cuerpo de la solicitud")
 
@@ -44,10 +45,9 @@ async def chat_rag_handler(request: Request) -> StreamingResponse:
             ],
             "retriever": get_retriever(company_id)
         }
-        logger.debug(f"Filter aplicado: {filter_}")
 
-        conversational_rag_chain = await get_rag_agent(filter_, user_input, chat_session_id)
-        logger.debug(f"Resultado de get_rag_agent: {conversational_rag_chain}")
+        conversational_rag_chain = await get_rag_agent(user_input, chat_session_id,company_id,filter_)
+        logger.debug(f"Resultado de handle_user_question: {conversational_rag_chain}")
         
         if not conversational_rag_chain or "message" not in conversational_rag_chain:
             async def error_stream():

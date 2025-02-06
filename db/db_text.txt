@@ -1,0 +1,289 @@
+Tabla: AcquisitionChannel
+  Columna: id - VARCHAR(25)
+  Columna: tenancyId - VARCHAR(25)                                               
+  Columna: name - VARCHAR(100)
+  Columna: typeId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+  Columna: waId - TEXT
+Tabla: Tenancy
+  Columna: id - VARCHAR(25)
+  Columna: companyId - VARCHAR(25)
+  Columna: name - VARCHAR(100)
+  Columna: description - VARCHAR(100)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: Company
+  Columna: id - VARCHAR(25)
+  Columna: legalName - VARCHAR(100)
+  Columna: legalId - VARCHAR(30)
+  Columna: tradeName - VARCHAR(50)
+  Columna: companyLegalType - VARCHAR(4)
+  Columna: companySize - VARCHAR(6)
+  Columna: activityStartDate - DATE
+  Columna: numberOfWorkers - INTEGER
+  Columna: address - VARCHAR(150)
+  Columna: districtId - VARCHAR(25)
+  Columna: provinceId - VARCHAR(25)
+  Columna: countryId - VARCHAR(25)
+  Columna: deletedAt - TIMESTAMP
+  Columna: isActive - BOOLEAN
+Tabla: ColCountry
+  Columna: id - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: ColDistrict
+  Columna: id - VARCHAR(25)
+  Columna: provinceId - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: ColProvince
+  Columna: id - VARCHAR(25)
+  Columna: regionId - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: ColRegion
+  Columna: id - VARCHAR(25)
+  Columna: countryId - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: ColChannelType
+  Columna: id - VARCHAR(25)
+  Columna: name - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: BusinessWaNumber
+  Columna: id - VARCHAR(25)
+  Columna: countryCode - VARCHAR(10)
+  Columna: number - VARCHAR(10)
+  Columna: tenancyId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: Activity
+  Columna: id - VARCHAR(25)
+  Columna: leadId - VARCHAR(25)
+  Columna: channelId - VARCHAR(25)
+  Columna: activityType - VARCHAR(7)
+  Columna: activityDate - TIMESTAMP
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+Tabla: Lead
+  Columna: id - VARCHAR(25)
+  Columna: acquisitionChannelId - VARCHAR(25)
+  Columna: tenancyId - VARCHAR(25)
+  Columna: conversionStatus - VARCHAR(10)
+  Columna: agentId - VARCHAR(25)
+  Columna: funnelStatus - VARCHAR(10)
+  Columna: interestLevel - VARCHAR(6)
+  Columna: createdAt - TIMESTAMP
+  Columna: personId - VARCHAR(25)
+  Columna: createdBy - VARCHAR(25)
+  Columna: updatedAt - TIMESTAMP
+  Columna: updatedBy - VARCHAR(25)
+  Columna: previousConversationId - VARCHAR(25)
+  Columna: currentConversationId - VARCHAR(25)
+  Columna: deletedAt - TIMESTAMP
+  Columna: isTemporal - BOOLEAN
+Tabla: UserWorkspace
+  Columna: id - VARCHAR(25)
+  Columna: userId - VARCHAR(25)
+  Columna: workspaceId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+Tabla: AuthUser
+  Columna: id - VARCHAR(25)
+  Columna: password - VARCHAR(128)
+  Columna: lastLogin - TIMESTAMP
+  Columna: isSuperuser - BOOLEAN
+  Columna: username - VARCHAR(150)
+  Columna: firstName - VARCHAR(150)
+  Columna: lastName - VARCHAR(150)
+  Columna: email - VARCHAR(254)
+  Columna: isStaff - BOOLEAN
+  Columna: isActive - BOOLEAN
+  Columna: dateJoined - TIMESTAMP
+  Columna: tenancyId - VARCHAR(25)
+Tabla: Workspace
+  Columna: id - VARCHAR(25)
+  Columna: tenancyId - VARCHAR(25)
+  Columna: name - VARCHAR(80)
+  Columna: type - VARCHAR(50)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: Conversation
+  Columna: id - VARCHAR(25)
+  Columna: leadId - VARCHAR(25)
+  Columna: acquisitionChannelId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+Tabla: Person
+  Columna: id - VARCHAR(25)
+  Columna: document - VARCHAR(20)
+  Columna: lastName - VARCHAR(100)
+  Columna: secondLastName - VARCHAR(100)
+  Columna: firstNames - VARCHAR(200)
+  Columna: birthDate - DATE
+  Columna: gender - CHAR(1)
+  Columna: idCard - VARCHAR(20)
+  Columna: issueDate - DATE
+  Columna: registrationDate - DATE
+  Columna: height - INTEGER
+  Columna: age - INTEGER
+  Columna: locationCode - VARCHAR(50)
+  Columna: location - VARCHAR(200)
+  Columna: address - VARCHAR(200)
+  Columna: status - VARCHAR(50)
+  Columna: salary - INTEGER
+  Columna: credit - INTEGER
+  Columna: mother - VARCHAR(200)
+  Columna: father - VARCHAR(200)
+  Columna: state - VARCHAR(100)
+  Columna: province - VARCHAR(100)
+  Columna: district - VARCHAR(100)
+  Columna: phone - VARCHAR(20)
+  Columna: fullName - VARCHAR(200)
+  Columna: expirationDate - DATE
+  Columna: educationLevel - VARCHAR(100)
+  Columna: restrictions - TEXT
+  Columna: deletedAt - TIMESTAMP
+Tabla: LeadWaNumber
+  Columna: id - VARCHAR(25)
+  Columna: countryCode - VARCHAR(10)
+  Columna: number - VARCHAR(10)
+  Columna: waId - VARCHAR(20)
+  Columna: leadId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: Message
+  Columna: id - VARCHAR(25)
+  Columna: waMessageId - VARCHAR(25)
+  Columna: conversationId - VARCHAR(25)
+  Columna: messageTypeId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+Tabla: ColMessageType
+  Columna: id - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: WaMessage
+  Columna: id - VARCHAR(25)
+  Columna: status - VARCHAR(9)
+  Columna: type - VARCHAR(4)
+  Columna: fileCount - INTEGER
+  Columna: body - VARCHAR(500)
+  Columna: segmentsCount - INTEGER
+  Columna: referralNumMedia - INTEGER
+  Columna: senderWaProfileName - VARCHAR(150)
+  Columna: senderWaNumber - VARCHAR(25)
+  Columna: senderWaId - VARCHAR(25)
+  Columna: receiverWaNumber - VARCHAR(25)
+  Columna: receiverWaId - VARCHAR(25)
+  Columna: apiVersion - VARCHAR(30)
+  Columna: waAttachedFileId - VARCHAR(25)
+  Columna: hasAttachedFiles - BOOLEAN
+  Columna: conversationId - TEXT
+  Columna: leadId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: WaAttachedFile
+  Columna: id - VARCHAR(25)
+  Columna: type - VARCHAR(5)
+  Columna: name - VARCHAR(150)
+  Columna: url - VARCHAR(255)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+Tabla: File
+  Columna: id - VARCHAR(25)
+  Columna: type - VARCHAR(5)
+  Columna: name - VARCHAR(150)
+  Columna: url - VARCHAR(255)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: RealEstateProjectImage
+  Columna: id - VARCHAR(25)
+  Columna: realEstateProjectId - VARCHAR(25)
+  Columna: description - TEXT
+  Columna: type - VARCHAR(50)
+  Columna: uploadDate - TIMESTAMP
+  Columna: fileId - VARCHAR(25)
+Tabla: RealEstateProject
+  Columna: id - VARCHAR(25)
+  Columna: tenancyId - VARCHAR(25)
+  Columna: name - VARCHAR(100)
+  Columna: address - VARCHAR(100)
+  Columna: slug - VARCHAR(60)
+  Columna: shortCode - VARCHAR(50)
+  Columna: realEstateProjectTypeId - VARCHAR(25)
+  Columna: districtId - VARCHAR(25)
+  Columna: countryId - VARCHAR(25)
+  Columna: constructionStatusId - VARCHAR(25)
+  Columna: commercialStatusId - VARCHAR(25)
+  Columna: mainImageUrl - VARCHAR(200)
+  Columna: executingCompanyId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: ColCommercialStatus
+  Columna: id - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: ColConstructionStatus
+  Columna: id - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: ColRealEstateProjectType
+  Columna: id - VARCHAR(25)
+  Columna: description - VARCHAR(100)
+  Columna: isActive - BOOLEAN
+Tabla: RealEstateProjectLayout
+  Columna: id - VARCHAR(25)
+  Columna: realEstateProjectId - VARCHAR(25)
+  Columna: fileId - VARCHAR(25)
+  Columna: uploadDate - TIMESTAMP
+Tabla: RealEstateProjectUnit
+  Columna: id - VARCHAR(25)
+  Columna: projectId - VARCHAR(25)
+  Columna: name - VARCHAR(50)
+  Columna: code - VARCHAR(50)
+  Columna: type - VARCHAR(50)
+  Columna: price - BIGINT
+  Columna: bedroomsCount - INTEGER
+  Columna: bathroomsCount - INTEGER
+  Columna: area - VARCHAR(50)
+  Columna: layout - VARCHAR(50)
+  Columna: floor - VARCHAR(50)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+  Columna: deletedAt - TIMESTAMP
+Tabla: Role
+  Columna: id - VARCHAR(25)
+  Columna: name - VARCHAR(50)
+  Columna: isActive - BOOLEAN
+Tabla: UserRole
+  Columna: id - VARCHAR(25)
+  Columna: userId - VARCHAR(25)
+  Columna: roleId - VARCHAR(25)
+  Columna: workspaceId - VARCHAR(25)
+  Columna: createdAt - TIMESTAMP
+  Columna: updatedAt - TIMESTAMP
+Tabla: _prisma_migrations
+  Columna: id - VARCHAR(36)
+  Columna: checksum - VARCHAR(64)
+  Columna: finished_at - TIMESTAMP
+  Columna: migration_name - VARCHAR(255)
+  Columna: logs - TEXT
+  Columna: rolled_back_at - TIMESTAMP
+  Columna: started_at - TIMESTAMP
+  Columna: applied_steps_count - INTEGER
+Tabla: Migration
+  Columna: id - VARCHAR(25)
+  Columna: source - VARCHAR(150)
+  Columna: updatedAt - TIMESTAMP
+  Columna: description - TEXT
+  Columna: referenceId - BIGINT

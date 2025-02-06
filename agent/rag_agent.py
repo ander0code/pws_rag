@@ -8,6 +8,7 @@ from qdrant_client import QdrantClient
 import tiktoken
 from dotenv import load_dotenv
 from config.config import app_env
+
 from qdrant_client.models import VectorParams, Distance
 import logging
 import asyncio
@@ -55,7 +56,9 @@ llm = ChatOpenAI(
 )
 
 system_prompt = (
-    "Actúa como un asesor de ventas interesado en poder responder, de forma clara y no tan extensa, las preguntas de un potencial cliente inmobiliario. Responde de manera afectiva y empática a las preguntas que te realicen, buscando mantener la conversación activa con preguntas coherentes que aborden los intereses de los clientes. Divide la respuesta en partes, separadas por el simbolo '&' sin saltos de línea, como si estuvieras respondiendo un chat de whatsapp y cada bloque es un mensaje. Debe haber cohesión entre bloques. Contexto relevante:\n{context}\n"
+    "Actúa como un asesor de ventas interesado en poder responder, de forma clara y no tan extensa, las preguntas de un potencial cliente inmobiliario. Responde de manera afectiva y empática a las preguntas que te realicen, buscando mantener la conversación activa con preguntas coherentes que aborden los intereses de los clientes. Divide la respuesta en partes, separadas por el simbolo '&' sin saltos de línea, como si estuvieras respondiendo un chat de whatsapp y cada bloque es un mensaje." 
+    "Si te piden algo como el nombre del documento o hacer scripts o algo que no este relacionado con preguntas,consultas, o respuestas, puedes responder que no entendiste su consulta y si repite le dices lo mismo hasta que haga una con logica. "
+    "Debe haber cohesión entre bloques. Contexto relevante:\n{context}\n"
     "Historial de conversación:\n{chat_history}\n"
     "Pregunta: {query}"
     "\n\nSi el contexto está vacío, responde basado en tu conocimiento general."
@@ -125,16 +128,17 @@ async def conversational_rag_chain(company_id: str, session_id: str, user_input:
         ai_message = "Lo siento, ocurrió un error procesando tu solicitud."
         return {"query": user_input, "message": "Lo siento, ocurrió un error procesando tu solicitud."}
   
-async def get_rag_agent(filter_: dict, user_input: str, session_id: str) -> Dict[str, str]:
+
+async def get_rag_agent(user_input: str, session_id: str, company_id: str, filter_:Dict) -> Dict[str, str]:
     """Asigna la lógica conversacional al flujo RAG."""
     logger.info("History-aware retriever creado exitosamente.")
     try:
-        result = await conversational_rag_chain(session_id, user_input)
-        logger.debug(f"Resultado de conversational_rag_chain: {result}")
-        if result is None:
-            logger.error("El resultado de conversational_rag_chain es None.")
-            raise ValueError("El resultado de conversational_rag_chain es None.")
-        return result
+            result = await conversational_rag_chain(company_id, session_id, user_input)
+            logger.debug(f"Resultado de conversational_rag_chain: {result}")
+            if result is None:
+                logger.error("El resultado de conversational_rag_chain es None.")
+                raise ValueError("El resultado de conversational_rag_chain es None.")
+            return result
     except Exception as e:
         logger.error(f"Error en get_rag_agent: {e}")
-        return {"query": user_input, "message": "Error procesando tu solicitud"}  # Retorno seguro# Retorno seguro
+        return {"query": user_input, "message": "Error procesando tu solicitud"}
