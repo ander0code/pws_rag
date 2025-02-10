@@ -1,5 +1,5 @@
 import logging
-from fastapi import Request, HTTPException
+from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from session.session_repository import RedisSessionRepository
 from session.session_service import SessionService
@@ -17,12 +17,12 @@ class SessionMiddleware(BaseHTTPMiddleware):
         if path == "/session" and method == "POST":
             return await call_next(request)
         
-        user_id = request.headers.get("Authorization")
-        if not user_id:
-            logger.warning("Unauthorized access attempt: Missing user ID")
-            raise HTTPException(status_code=401, detail="Unauthorized")
+        # user_id = request.headers.get("Authorization")
+        # if not user_id:
+        #     logger.warning("Unauthorized access attempt: Missing user ID")
+        #     raise HTTPException(status_code=401, detail="Unauthorized")
         
-        request.state.user_id = user_id
+        # request.state.user_id = user_id
         
         logger.info("User is authorized")
         return await call_next(request)

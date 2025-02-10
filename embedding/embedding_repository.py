@@ -7,7 +7,7 @@ from typing import Dict
 from dotenv import load_dotenv
 
 from config.config import app_env
-from agent.rag_agent import qdrant_client
+from agent.embending_agent import qdrant_client
 
 import logging
 logger = logging.getLogger("uvicorn")

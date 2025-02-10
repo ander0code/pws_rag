@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
-from agent.rag_agent import get_retriever
-from agent.rag_agent import get_rag_agent
+from agent.embending_agent import get_vector_store
+from agent.response_agent import get_response_agent
 from concurrent.futures import ThreadPoolExecutor
 import orjson
 import logging
@@ -26,7 +26,7 @@ async def chat_rag_handler(request: Request) -> StreamingResponse:
         company_id = request.headers.get("company")
 
         if not chat_session_id:
-            raise HTTPException(status_code=400, detail="Falta el header 'session'")
+            raise HTTPException(status_code=400, detail="Falta el header 'chat_session'")
         if not company_id:
             raise HTTPException(status_code=400, detail="Falta el header 'company'")
         
@@ -43,10 +43,10 @@ async def chat_rag_handler(request: Request) -> StreamingResponse:
                 {"key": "companyId",  "match": {"value": int(company_id)}},
                 {"key": "ChatSessionId", "match": {"value": chat_session_id}},
             ],
-            "retriever": get_retriever(company_id)
+            "retriever": get_vector_store(company_id)
         }
 
-        conversational_rag_chain = await get_rag_agent(user_input, chat_session_id,company_id,filter_)
+        conversational_rag_chain = await get_response_agent(user_input, chat_session_id,company_id,filter_)
         logger.debug(f"Resultado de handle_user_question: {conversational_rag_chain}")
         
         if not conversational_rag_chain or "message" not in conversational_rag_chain:
